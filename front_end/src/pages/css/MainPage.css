@@ -1,0 +1,14 @@
+.img-header {
+    width: 100px;
+    height: 48px;
+}
+
+.toolbar-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ion-title{
+    font-size: medium;
+}

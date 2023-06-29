@@ -1,0 +1,1 @@
+const Buy = require('../models/buy.model');
