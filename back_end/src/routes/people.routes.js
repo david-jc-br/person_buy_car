@@ -6,8 +6,10 @@ router.get('/', peopleController.getAllPeople);
 
 router.post('/', peopleController.createPerson);
 
-router.put('/:id', peopleController.updatePerson);
+router.post('/login', peopleController.login);
 
-router.delete('/:id', peopleController.deletePerson);
+router.put('/:cpf', peopleController.updatePerson);
+
+router.delete('/:cpf', peopleController.deletePerson);
 
 module.exports = router;

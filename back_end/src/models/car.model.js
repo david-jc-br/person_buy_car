@@ -20,15 +20,20 @@ const Car = db.define('car', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    plate: {
-        type: DataTypes.STRING(7),
-        allowNull: false,
-        unique: true,
+    owner_cpf: {
+        type: DataTypes.STRING(11),
+        allowNull: true,
+        references: {
+            model: People,
+            key: 'cpf',
+        },
     },
-},{
-    timestamps: false // Desativa a inclusão dos campos createdAt e updatedAt
+}, {
+    timestamps: false, // Desativa a inclusão dos campos createdAt e updatedAt
 });
 
-Car.belongsTo(People, { foreignKey: 'owner_id' });
+Car.belongsTo(People, {
+    foreignKey: 'owner_cpf'
+});
 
 module.exports = Car;

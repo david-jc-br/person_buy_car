@@ -1,28 +1,31 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/database');
 
-const People  = db.define('people', {
-    id: {
-        type: DataTypes.INTEGER,
+const People = db.define('people', {
+    cpf: {
+        type: DataTypes.STRING(11),
         primaryKey: true,
-        autoIncrement: true,
+        unique: true,
+        allowNull: false,
     },
 
     name: {
         type: DataTypes.STRING(100),
         allowNull: false,
     },
-
-    cpf: {
-        type: DataTypes.STRING(11),
+    email: {
+        type: DataTypes.STRING(50),
         allowNull: false,
-        unique: true,
     },
 
-    address: {
-        type: DataTypes.STRING(100),
-    }
-},{
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            notEmpty: true,
+        }
+    },
+}, {
     timestamps: false // Desativa a inclusão dos campos createdAt e updatedAt
 })
 

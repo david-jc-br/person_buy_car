@@ -10,7 +10,7 @@ const UpdateCar: React.FC = () => {
     const history = useHistory();
 
     const handleClickBackButton = () => {
-        history.push('/mainAdmin');
+        history.push('/cars');
     };
 
     return (
