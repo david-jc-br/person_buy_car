@@ -11,9 +11,9 @@ const getAllPeople = async (req, res, next) => {
 };
 
 const createPerson = async (req, res, next) => {
-	const { cpf, name, email, password } = req.body;
+	const { cpf, name, email, kind, password } = req.body;
 	try {
-		const person = await peopleService.createPerson({ cpf, name, email, password });
+		const person = await peopleService.createPerson({ cpf, name, email, kind,password });
 		res.json(person);
 	} catch (error) {
 		console.error(error);

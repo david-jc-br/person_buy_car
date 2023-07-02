@@ -1,6 +1,7 @@
 const express = require('express');
 const chalk = require('chalk');
 const https = require('https');
+const cors = require('cors');
 const fs = require('fs');
 const app = express();
 const carRoutes = require('./routes/car.routes');
@@ -9,6 +10,7 @@ const db = require('./config/database');
 
 // Middleware para processar o corpo das requisições como JSON
 app.use(express.json());
+app.use(cors());
 
 // Rota inicial do aplicativo
 app.get('/', (req, res) => {

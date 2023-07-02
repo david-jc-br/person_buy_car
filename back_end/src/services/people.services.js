@@ -12,12 +12,12 @@ const getAllPeople = async () => {
 };
 
 const createPerson = async (personData) => {
-    const { cpf, name, email, password } = personData;
+    const { cpf, name, email, kind, password } = personData;
     try {
         // ----Criptografa a senha----
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const person = await People.create({ cpf, name, email, password: hashedPassword });
+        const person = await People.create({ cpf, name, email, kind, password: hashedPassword });
 
         return person;
     } catch (error) {
@@ -39,8 +39,8 @@ const login = async (inputCpf, password) => {
             throw new Error('Senha inválida');
         }
 
-        const { cpf, name, email } = user;
-        return { cpf, name, email };
+        const { cpf, name, kind, email } = user;
+        return { cpf, name, kind, email };
     } catch (error) {
         console.error(error);
         throw new Error('Falha na autenticação');

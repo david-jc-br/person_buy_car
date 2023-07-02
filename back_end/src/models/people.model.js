@@ -18,6 +18,11 @@ const People = db.define('people', {
         allowNull: false,
     },
 
+    kind: {
+        type: DataTypes.ENUM('user', 'admin'),
+        allowNull: false,
+    },
+
     password: {
         type: DataTypes.STRING,
         allowNull: false,
