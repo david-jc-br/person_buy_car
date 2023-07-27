@@ -1,43 +1,54 @@
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import { arrowBack, key, mail, people, person, refresh } from 'ionicons/icons';
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 
 // Components
 import Footer from '../components/FooterComponent';
 
 // Styles
 import './css/ProfilePage.css';
-import { getAllPeople } from '../services/peopleService';
+import { getPersonByCpf } from '../services/peopleService';
 
-const ListPeople: React.FC = () => {
+interface Person {
+
+    cpf: string;
+    name: string;
+    email: string;
+    profile: string;
+    password: string;
+}
+
+const ProfilePerson: React.FC = () => {
+    const { cpf } = useParams<{ cpf: string }>();
     const history = useHistory();
-    const initialData = { cpf: '', name: '', email: '', kind: '' };
-    const [userData, setUserData] = useState(initialData);
+    const [personData, setPersonData] = useState<Person | null>(null); // Alterado o estado para Person | null
 
     const handleClickBackButton = () => {
-        history.goBack;
+        history.goBack();
     };
 
     const handleClickUpdateButton = () => {
-        history.push('/updatePerson');
+        history.push(`/updatePerson/${cpf}`);
     };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const cpf = localStorage.getItem('cpf');
-                const response = await getAllPeople();
-                const peopleData = response.data || [];
-                const user = peopleData.find((person:any) => person.cpf === cpf);
-                setUserData(user || initialData);
+                const response = await getPersonByCpf(cpf);
+
+                if (response === null) {
+                    throw new Error('Person not Found');
+                }
+
+                setPersonData(response);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         };
 
         fetchData();
-    }, []);
+    }, [cpf]); // Adicionamos "cpf" como dependência para o useEffect para que ele seja executado quando o parâmetro mudar
 
     return (
         <IonPage>
@@ -51,7 +62,7 @@ const ListPeople: React.FC = () => {
 
                         <IonTitle className='ion-title' slot='start'>Your<br></br>Data</IonTitle>
 
-                        <IonButton size='small' slot='end' shape='round' color='warning' onClick={handleClickUpdateButton}>
+                        <IonButton size='small' slot='end' shape='round' color='primary' onClick={handleClickUpdateButton}>
                             <IonIcon slot='end' icon={refresh}></IonIcon>
                             Update
                         </IonButton>
@@ -63,28 +74,22 @@ const ListPeople: React.FC = () => {
                     <IonItem>
                         <IonLabel>
                             <IonIcon slot='start' icon={key} />
-                            CPF: {userData?.cpf || ''}
+                            CPF: {personData?.cpf || ''} {/* Usamos "personData?.cpf" para garantir que o valor seja exibido somente se "personData" não for nulo */}
                         </IonLabel>
                     </IonItem>
                     <IonItem>
                         <IonLabel>
                             <IonIcon slot='start' icon={person} />
-                            Name: {userData?.name || ''}
+                            Name: {personData?.name || ''} { }
                         </IonLabel>
                     </IonItem>
                     <IonItem>
                         <IonLabel>
                             <IonIcon slot='start' icon={mail} />
-                            Email: {userData?.email || ''}
+                            Email: {personData?.email || ''} { }
                         </IonLabel>
                     </IonItem>
-                    <IonItem>
-                        <IonLabel>
-                            <IonIcon slot='start' icon={people} />
-                            Kind: {userData?.kind || ''}
-                        </IonLabel>
-                    </IonItem>
-                    {/* Renderize outros dados do usuário conforme necessário */}
+
                 </IonList>
             </IonContent>
             <Footer />
@@ -92,4 +97,4 @@ const ListPeople: React.FC = () => {
     );
 };
 
-export default ListPeople;
+export default ProfilePerson;

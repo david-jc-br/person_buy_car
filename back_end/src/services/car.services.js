@@ -1,5 +1,4 @@
-const Car = require('../models/car.model');
-const People = require('../models/people.model')
+const { Car } = require('../models/main.model');
 
 const getAllCars = async () => {
     try {
@@ -11,119 +10,177 @@ const getAllCars = async () => {
     }
 };
 
-const getMyCars = async (owner_cpf) => {
+const getAllAvailablesCars = async () => {
     try {
-        const person = await People.findByPk(owner_cpf);
-
-        if (!person) {
-            throw new Error('Person not found');
-        }
-
-        const myCars = await Car.findAll({
-            where: {
-                owner_cpf: person.cpf
-            }
-        });
-
-        return myCars;
-        
+        const cars = await Car.findAll({ where: { status: "available" } });
+        return cars;
     } catch (error) {
-        console.error(error);
-        throw new Error('Error when looking for person\'s cars');
+        
     }
-};
+}
 
 const createCar = async (carData) => {
-    const { brand, model, year, owner_cpf } = carData;
+    const { plate, brand, model, year, price } = carData;
     try {
+        isValidBrand(brand);
+        isValidModel(model);
+        isValidPlate(plate);
+        isValidYear(year);
+        isValidPrice(price)
 
-        const car = await Car.create({ brand, model, year, owner_cpf: owner_cpf || null });
+        const car = await Car.create({ plate, brand, model, year, price, status:"available"});
+
         return car;
     } catch (error) {
         console.error(error);
-        throw new Error('Error when create a new car');
+        throw new Error('Error when creating a new car');
     }
 };
 
-const updateCarOwner = async (id, owner_cpf) => {
+const updateCar = async (plate, carData) => {
+    const { newPlate, brand, model, year, price, status } = carData;
     try {
-        const car = await Car.findByPk(id);
-        if (!car) {
+        isValidBrand(brand);
+        isValidModel(model);
+        isValidYear(year);
+        isValidStatus(status);
+        isValidPrice(price)
+
+        const existingCar = await Car.findOne({ where: { plate } });
+        if (!existingCar) {
             throw new Error('Car not found');
         }
 
-        car.owner_cpf = owner_cpf;
-        await car.save();
-
-        return car;
-    } catch (error) {
-        console.error(error);
-        throw new Error('Error updating car owner');
-    }
-};
-
-const updateCar = async (id, carData) => {
-    const { brand, model, year, plate} = carData;
-    try {
-
-        const car = await Car.findByPk(id);
-        if (!car) {
-            throw new Error('Car not found');
+        if (newPlate && newPlate !== plate) {
+            const carWithNewPlate = await Car.findOne({ where: { plate: newPlate } });
+            if (carWithNewPlate) {
+                throw new Error('Another car with the new plate already exists');
+            }
         }
 
-        car.brand = brand;
-        car.model = model;
-        car.year = year;
-        car.plate = plate;
-        await car.save();
-        return car;
+        const updateFields = { brand, model, year, price, status };
+        if (newPlate && newPlate !== plate) {
+            updateFields.plate = newPlate;
+        }
+
+        await Car.update(updateFields, { where: { plate } });
+
+        // Recarregue o objeto car após a atualização
+        const updatedCar = await Car.findOne({ where: { plate } });
+
+        console.log('Car updated:', updatedCar.dataValues);
+        return updatedCar;
     } catch (error) {
         console.error(error);
-        throw new Error('Error updating car');
+        throw new Error('Error updating car: ' + error);
     }
 };
 
-const deleteCar = async (id) => {
+const deleteCar = async (plate) => {
     try {
-        const car = await Car.findByPk(id);
+        const car = await Car.findByPk(plate);
+        if(!car){
+            throw new Error("Car not found!");
+        }
+        if(car.status === "sold")
+        {
+            throw new Error('Car not available')
+        }
         await car.destroy();
         return 'Car deleted successfully';
     } catch (error) {
         console.error(error);
-        throw new Error('Error deleting car');
+        throw new Error('Error deleting car:' + error);
     }
 };
 
-// ======VALIDATE=======
+const isValidModel = (model) => {
+    try {
+        // Verifica se o modelo tem no máximo 50 caracteres
+        return model.length <= 50;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error validating model');
+    }
+};
+
+const isValidYear = (year) => {
+    try {
+        // Verifica se o ano é maior que 2020
+        return Number(year) > 2020;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error validating year');
+    }
+};
+
+const isValidStatus = (status) => {
+    const validStatus = [
+        'available',
+        'sold',
+    ]
+
+    if (!validStatus.includes(status)) {
+        throw new Error(`The status: ${status} it's not valid, status must be available or sold`);
+    }
+};
+
+const isValidPlate = (plate) => {
+    if (plate.length !== 7) {
+        throw new Error('The plate must have exactly 7 characters.');
+    }
+};
+
+const isValidPrice = (price) => {
+    if(price <= 0){
+        throw new Error('Price must be > 0')
+    }
+}
+
 
 const isValidBrand = (brand) => {
-    const carBrands = [
-        'Ford',
-        'Chevrolet',
-        'Toyota',
-        'Honda',
-        'Volkswagen',
-        'BMW',
-        'Mercedes-Benz',
-        'Audi',
-        'Nissan',
-        'Hyundai',
-        'Kia',
-        'Volvo',
-        'Subaru',
-        'Mazda',
-        'Tesla',
-        'Ferrari',
-        'Lamborghini',
-        'Porsche',
-        'Jaguar',
-        'Land Rover'
-    ];
+    try {
+        // Marcas famosas de carro
+        const validBrands = [
+            'Toyota',
+            'Honda',
+            'Ford',
+            'Chevrolet',
+            'Volkswagen',
+            'BMW',
+            'Mercedes-Benz',
+            'Audi',
+            'Nissan',
+            'Hyundai',
+            'Kia',
+            'Volvo',
+            'Mazda',
+            'Subaru',
+            'Lexus',
+            'Tesla',
+            'Ferrari',
+            'Porsche',
+            'Jaguar',
+            'Land Rover'
+        ];
 
-    if (!(carBrands.includes(brand))) {
-        throw new Error('A marca não é válida');
+        if (!validBrands.includes(brand)) {
+            throw new Error('Invalid brand');
+        }
+
+        return true;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error validating brand');
     }
 };
 
 
-module.exports = { getAllCars, getMyCars, createCar, updateCar, updateCarOwner, deleteCar };
+module.exports = {
+    getAllCars,
+    getAllAvailablesCars,
+    createCar,
+    updateCar,
+    deleteCar,
+    isValidBrand
+};

@@ -8,7 +8,7 @@ const People: React.FC = () => {
     const history = useHistory();
 
     const handleClickBackButton = () => {
-        history.push('/mainAdmin');
+        history.goBack();
     };
 
     const handleClickDeleteButton = () => {

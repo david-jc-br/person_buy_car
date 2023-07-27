@@ -1,13 +1,16 @@
 import React from 'react';
 import { IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import { useHistory } from 'react-router';
+import { logIn } from 'ionicons/icons';
 
 //Components
 import Footer from '../components/FooterComponent';
 
 //Style
 import './css/HomePage.css'
-import { logIn } from 'ionicons/icons';
+
+//logo
+import logo from "../img/logo.png"
 
 const Home: React.FC = () => {
 
@@ -18,7 +21,7 @@ const Home: React.FC = () => {
   };
 
   const handleClickRightButton = () => {
-    history.push('/loginIn');
+    history.push('/login');
   };
 
   return (
@@ -41,7 +44,7 @@ const Home: React.FC = () => {
       </IonHeader>
       <IonContent fullscreen>
         <IonCard>
-          <img alt="icar-icon" src="https://github.com/david-jc-br/ICar/assets/73839667/c029e3fe-e02f-4c62-8d1e-7e8e14dd7521" />
+          <img alt="icar-icon" src={logo} />
           <IonCardHeader>
             <IonCardTitle className='card-title-home'>ICar</IonCardTitle>
           </IonCardHeader>

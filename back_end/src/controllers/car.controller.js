@@ -10,11 +10,10 @@ const getAllCars = async (req, res) => {
     }
 };
 
-const getMyCars = async (req, res) => {
-    const { owner_cpf } = req.params;
+const getAllAvailablesCars = async (req, res) => {
     try {
-        const myCars = await carService.getMyCars(owner_cpf);
-        res.json(myCars);
+        const cars = await carService.getAllAvailablesCars();
+        res.json(cars);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
@@ -22,21 +21,9 @@ const getMyCars = async (req, res) => {
 };
 
 const createCar = async (req, res) => {
-    const { brand, model, year, owner_cpf } = req.body;
+    const { plate, brand, model, year, price } = req.body;
     try {
-        const car = await carService.createCar({ brand, model, year, owner_cpf });
-        res.json(car);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: error.message });
-    }
-};
-
-const updateCarOwner = async (req, res) => {
-    const { id } = req.params;
-    const { owner_cpf } = req.body;
-    try {
-        const car = await carService.updateCarOwner(id, owner_cpf);
+        const car = await carService.createCar({ plate, brand, model, year, price });
         res.json(car);
     } catch (error) {
         console.error(error);
@@ -45,10 +32,10 @@ const updateCarOwner = async (req, res) => {
 };
 
 const updateCar = async (req, res) => {
-    const { id } = req.params;
-    const { brand, model, year, plate } = req.body;
+    const { plate } = req.params;
+    const { newPlate, brand, model, year, price, status } = req.body;
     try {
-        const car = await carService.updateCar(id, { brand, model, year, plate });
+        const car = await carService.updateCar(plate, { newPlate, brand, model, year, price, status });
         res.json(car);
     } catch (error) {
         console.error(error);
@@ -57,9 +44,9 @@ const updateCar = async (req, res) => {
 };
 
 const deleteCar = async (req, res) => {
-    const { id } = req.params;
+    const { plate } = req.params;
     try {
-        const car = await carService.deleteCar(id);
+        const car = await carService.deleteCar(plate);
         res.status(200).send(car);
     } catch (error) {
         console.error(error);
@@ -69,9 +56,8 @@ const deleteCar = async (req, res) => {
 
 module.exports = {
     getAllCars,
-    getMyCars,
+    getAllAvailablesCars,
     createCar,
-    updateCarOwner,
     updateCar,
     deleteCar
 };

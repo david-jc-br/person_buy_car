@@ -1,7 +1,8 @@
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import { addCircle, arrowBack, car, listCircle, refreshCircle, removeCircle } from 'ionicons/icons';
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
+
 
 //components
 import Footer from '../components/FooterComponent';
@@ -9,8 +10,10 @@ import Footer from '../components/FooterComponent';
 const Cars: React.FC = () => {
     const history = useHistory();
 
+    const { cpf } = useParams<{ cpf: string }>();
+
     const handleClickBackButton = () => {
-        history.push('/mainAdmin');
+        history.push(`/mainAdmin/${cpf}`);
     };
 
     const handleClickAddButton = () => {
@@ -55,16 +58,16 @@ const Cars: React.FC = () => {
                 </IonButton>
 
                 <IonButton expand="block" size='large' onClick={handleClickDeleteButton}>
-                    <IonIcon slot="start" icon={removeCircle} ></IonIcon>
+                    <IonIcon slot="start"  icon={removeCircle} ></IonIcon>
                     Delete
                 </IonButton>
 
                 <IonButton expand="block" size='large' onClick={handleClickUpdateButton}>
-                    <IonIcon slot="start" icon={refreshCircle} ></IonIcon>
+                    <IonIcon slot="start"  icon={refreshCircle} ></IonIcon>
                     Update
                 </IonButton>
 
-                <IonButton expand="block" size="large" onClick={handleClickListButton}>
+                <IonButton expand="block"  size="large" onClick={handleClickListButton}>
 
                     <IonIcon slot="start" icon={listCircle} ></IonIcon>
                     List

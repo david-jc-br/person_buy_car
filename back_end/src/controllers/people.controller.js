@@ -10,10 +10,23 @@ const getAllPeople = async (req, res, next) => {
 	}
 };
 
-const createPerson = async (req, res, next) => {
-	const { cpf, name, email, kind, password } = req.body;
+const getPersonByCpf = async (req, res, next) => {
+	const { cpf } = req.params;
 	try {
-		const person = await peopleService.createPerson({ cpf, name, email, kind,password });
+		const people = await peopleService.getPersonByCpf(cpf);
+		res.json(people);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: error.message });
+	}
+};
+
+
+const createPerson = async (req, res, next) => {
+	const { cpf, name, email, profile, password } = req.body;
+	try {
+		const person = await peopleService.createPerson({ cpf, name, email, profile
+			,password });
 		res.json(person);
 	} catch (error) {
 		console.error(error);
@@ -59,6 +72,7 @@ const deletePerson = async (req, res, next) => {
 module.exports = {
 	getAllPeople,
 	createPerson,
+	getPersonByCpf,
 	login,
 	updatePerson,
 	deletePerson,

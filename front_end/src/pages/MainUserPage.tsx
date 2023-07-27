@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { person, car, bag, logOut } from 'ionicons/icons';
 
 //Components
@@ -12,29 +12,29 @@ import './css/MainPage.css'
 const MainUser: React.FC = () => {
     const history = useHistory();
 
+    const { cpf } = useParams<{ cpf: string }>();
+
     const handleClickExitButton = () => {
         history.push('/home');
     };
 
     const handleClickProfileButton = () => {
-        history.push('/profileUser');
+        history.push(`/profile/${cpf}`);
     };
 
     const handleClickBuyButton = () => {
-        history.push('/buyCar');
+        history.push(`/buyCar/${cpf}`);
     };
 
     const handleClickMyCarsButton = () => {
-        history.push('/myCars');
+        history.push(`/myCars/${cpf}`);
     };
-
 
     return (
         <IonPage>
             <IonHeader>
                 <IonToolbar class='toolbar-main'>
                     <IonButtons>
-
                         <IonButton size='small' slot='start' shape="round" color='danger' onClick={handleClickExitButton}>
                             Exit
                             <IonIcon slot="start" icon={logOut}></IonIcon>
@@ -44,9 +44,8 @@ const MainUser: React.FC = () => {
 
                         <IonButton size='small' slot='end' shape="round" color='primary' onClick={handleClickProfileButton}>
                             <IonIcon slot="start" icon={person}></IonIcon>
-                            Your <br /> profile
+                            {cpf}
                         </IonButton>
-
                     </IonButtons>
                 </IonToolbar>
             </IonHeader>
@@ -60,7 +59,6 @@ const MainUser: React.FC = () => {
                     <IonIcon slot="start" icon={car} color='success'></IonIcon>
                     My Cars
                 </IonButton>
-
             </IonContent>
             <Footer />
         </IonPage>

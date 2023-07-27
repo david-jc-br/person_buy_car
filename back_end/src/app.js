@@ -5,6 +5,7 @@ const cors = require('cors');
 const fs = require('fs');
 const app = express();
 const carRoutes = require('./routes/car.routes');
+const buyRoutes = require('./routes/buy.routes');
 const peopleRoutes = require('./routes/people.routes');
 const db = require('./config/database');
 
@@ -18,8 +19,9 @@ app.get('/', (req, res) => {
 });
 
 // Rotas relacionadas aos carros
-app.use('/cars', carRoutes);
+app.use('/car', carRoutes);
 app.use('/people', peopleRoutes);
+app.use('/buy', buyRoutes);
 
 // Lidar com rotas não encontradas
 app.use((req, res, next) => {
@@ -29,7 +31,11 @@ app.use((req, res, next) => {
 // Lidar com erros globais
 app.use((err, req, res, next) => {
     console.error(err);
-    res.status(500).json({ message: 'Erro no servidor.' });
+    if (err.status === 500) {
+        res.status(500).json({ message: err.message });
+    } else {
+        res.status(500).json({ message: 'Erro no servidor.' });
+    }
 });
 
 // Sincronizar os modelos com o banco de dados
@@ -43,8 +49,7 @@ db.sync()
         };
         https.createServer(options, app).listen(3001, () => {
             console.log(chalk.green('\nServer started on port 3001 using HTTPS!'));
-
-            console.log(chalk.yellow ('\nhttps://localhost:3001/'));
+            console.log(chalk.yellow('\nhttps://localhost:3001/'));
         });
     })
     .catch((error) => {

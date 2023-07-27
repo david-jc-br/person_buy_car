@@ -1,4 +1,5 @@
-const People = require('../models/people.model');
+const {People} = require('../models/main.model');
+
 const bcrypt = require('bcrypt');
 
 const getAllPeople = async () => {
@@ -11,13 +12,23 @@ const getAllPeople = async () => {
     }
 };
 
+const getPersonByCpf = async (cpfPerson) => {
+    try {
+        const people = await People.findOne({ where: { cpf: cpfPerson } });
+        return people;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Error when search for person');
+    }
+};
+
 const createPerson = async (personData) => {
-    const { cpf, name, email, kind, password } = personData;
+    const { cpf, name, email, profile, password } = personData;
     try {
         // ----Criptografa a senha----
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const person = await People.create({ cpf, name, email, kind, password: hashedPassword });
+        const person = await People.create({ cpf, name, email, profile, password: hashedPassword });
 
         return person;
     } catch (error) {
@@ -33,14 +44,14 @@ const login = async (inputCpf, password) => {
             throw new Error('Usuário não encontrado');
         }
 
-        // descriptografa
+        // compara senha criptografada
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
             throw new Error('Senha inválida');
         }
 
-        const { cpf, name, kind, email } = user;
-        return { cpf, name, kind, email };
+        const { cpf, name, profile, email } = user;
+        return { cpf, name, profile, email };
     } catch (error) {
         console.error(error);
         throw new Error('Falha na autenticação');
@@ -88,6 +99,7 @@ const deletePerson = async (cpf) => {
 module.exports = { 
     getAllPeople, 
     createPerson, 
+    getPersonByCpf,
     login, 
     updatePerson, 
     deletePerson,

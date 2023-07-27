@@ -1,5 +1,5 @@
-import { IonPage, IonContent, IonInput, IonItem, IonList, IonButton, IonButtons, IonHeader, IonTitle, IonToolbar, IonIcon } from "@ionic/react";
-import React, { useState } from "react";
+import { IonPage, IonContent, IonInput, IonItem, IonList, IonButton, IonButtons, IonHeader, IonTitle, IonToolbar, IonIcon, IonAlert } from "@ionic/react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { arrowBackSharp, arrowForwardSharp } from "ionicons/icons";
 
@@ -12,31 +12,46 @@ import Footer from "../components/FooterComponent";
 // Style
 import './css/LoginPage.css'
 
-const SignIn: React.FC = () => {
+const Login: React.FC = () => {
     const history = useHistory();
     const [cpf, setCPF] = useState("");
     const [password, setPassword] = useState("");
+    const [showAlert, setShowAlert] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     const handleClickBackButton = () => {
-        history.push('/home');
+        history.goBack();
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // Evita que a página seja recarregada
 
-        try {
-            const { kind } = await login(cpf, password);
-            console.log(kind);
+        // Verificar se algum campo está em branco
+        if (cpf.trim() === '' || password.trim() === '') {
+            setShowAlert(true);
+            setErrorMessage('Please fill in all the required fields.');
+            return;
+        }
 
-            if (kind === 'user') {
-                history.push('/mainUser');
-            } else {
-                history.push('/mainAdmin');
+        try {
+            const dataLogin = await login(cpf, password);
+
+            if (dataLogin) {
+                // Definir uma única vez antes de redirecionar
+                setShowAlert(true);
+                setSuccessMessage(dataLogin.profile === 'admin' ? 'Admin login successful!' : 'Login successful!');
+                setCPF("");
+                setPassword("");
+                history.push(dataLogin.profile === 'admin' ? `/mainAdmin/${cpf}` : `/mainUser/${cpf}`);
             }
+
         } catch (error) {
-            console.error("Error logging in:", error);
+            setShowAlert(true);
+            setErrorMessage('Error login: CPF or password incorrect' );
         }
     };
+
 
     return (
         <IonPage>
@@ -87,8 +102,15 @@ const SignIn: React.FC = () => {
                 </IonList>
             </IonContent>
             <Footer />
+            <IonAlert
+                isOpen={showAlert}
+                onDidDismiss={() => setShowAlert(false)}
+                header={errorMessage ? 'Error' : 'Success'}
+                message={errorMessage || successMessage}
+                buttons={['OK']}
+            />
         </IonPage>
     );
 }
 
-export default SignIn;
+export default Login;

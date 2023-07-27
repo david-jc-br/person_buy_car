@@ -25,21 +25,20 @@ import './theme/variables.css';
 // Pages
 import HomePage from './pages/HomePage';
 import SignUpPage from './pages/SignUpPage';
-import SignInPage from './pages/LoginPage';
+import LoginPage from './pages/LoginPage';
 import MainAdmin from './pages/MainAdminPage';
 import MainUser from './pages/MainUserPage';
 import MyCars from './pages/MyCarsPage';
 import Cars from './pages/CarsPage';
 import BuyCar from './pages/BuyCarPage';
 import People from './pages/PeoplePage';
-import ProfileUser from './pages/ProfileUserPage';
-import ProfileAdmin from './pages/ProfileAdminPage';
 import AddCar from './pages/AddCarPage';
 import DeleteCar from './pages/DeleteCarPage';
 import UpdateCar from './pages/UpdateCarPage';
 import ListCar from './pages/ListCarPage';
 import DeletePerson from './pages/DeletePersonPage';
 import UpadatePerson from './pages/UpdatePersonPage';
+import ProfilePerson from './pages/ProfilePersonPage';
 import ListPeople from './pages/ListPeoplePage';
 
 setupIonicReact();
@@ -48,7 +47,7 @@ const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
-        <Route  path="/" exact={true}>
+        <Route path="/" exact={true}>
           <HomePage />
         </Route>
         <Route path="/home" exact={true}>
@@ -57,25 +56,22 @@ const App: React.FC = () => (
         <Route path="/signUp" exact={true}>
           <SignUpPage />
         </Route>
-        <Route path="/loginIn" exact={true}>
-          <SignInPage />
+        <Route path="/login/" exact={true}>
+          <LoginPage />
         </Route>
-        <Route path="/mainUser" exact={true}>
+        <Route path="/mainUser/:cpf" exact={true}>
           <MainUser />
         </Route>
-        <Route path="/mainAdmin" exact={true}>
+        <Route path="/mainAdmin/:cpf" exact={true}>
           <MainAdmin />
         </Route>
-        <Route path="/buyCar" exact={true}>
+        <Route path="/buyCar/:cpf" exact={true}>
           <BuyCar />
         </Route>
-        <Route path="/profileAdmin" exact={true}>
-          <ProfileAdmin />
+        <Route path="/profile/:cpf" exact={true}>
+          <ProfilePerson />
         </Route>
-        <Route path="/profileUser" exact={true}>
-          <ProfileUser />
-        </Route>
-        <Route path="/myCars" exact={true}>
+        <Route path="/myCars/:cpf" exact={true}>
           <MyCars />
         </Route>
         <Route path="/cars" exact={true}>
@@ -99,7 +95,7 @@ const App: React.FC = () => (
         <Route path="/deletePerson" exact={true}>
           <DeletePerson />
         </Route>
-        <Route path="/updatePerson" exact={true}>
+        <Route path="/updatePerson/:cpf" exact={true}>
           <UpadatePerson />
         </Route>
         <Route path="/listPeople" exact={true}>
